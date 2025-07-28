@@ -16,11 +16,8 @@ lottery = "CsgojSEAWiq9Ns1hW2Y8mmvKVhcmF9vU5W6fUXjg4uDi"
 lottery = "CsgojSEAWiq9Ns1hW2Y8mmvKVhcmF9vU5W6fUXjg4uDi"
 
 [registry]
-url = "https://api.apr.dev"
+url = "https://github.com/zohu/csgohome"
 
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
-
-[verify]
-provider = "podman"
