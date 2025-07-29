@@ -1,12 +1,11 @@
 [package]
 name = "lottery"
 version = "0.1.0"
-description = "lottery"
 edition = "2021"
 
 [lib]
-crate-type = ["cdylib", "lib"]
 name = "lottery"
+crate-type = ["cdylib", "lib"]
 
 [features]
 default = []

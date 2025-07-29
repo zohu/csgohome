@@ -8,8 +8,8 @@ PROGRAM_ID := CsgojSEAWiq9Ns1hW2Y8mmvKVhcmF9vU5W6fUXjg4uDi
 
 .PHONY: keypair
 keypair:
-	@cp -a ~/.config/solana/${PROGRAM_ID}.json target/deploy/csgohome-keypair.json
-	@solana address -k target/deploy/csgohome-keypair.json
+	@cp -a ~/.config/solana/${PROGRAM_ID}.json target/deploy/lottery-keypair.json
+	@solana address -k target/deploy/lottery-keypair.json
 
 .PHONY: build
 build: keypair
@@ -61,3 +61,7 @@ upgrade-main: build
 
 sol:
 	@solana rent $$(stat -f%z target/deploy/lottery.so)
+
+test:
+	@solana-verify verify-from-repo -u "http://localhost:8899" \
+		--program-id ${PROGRAM_ID} https://github.com/zohu/csgohome
