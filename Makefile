@@ -28,8 +28,7 @@ deploy-dev: build
 	solana account  ~/.config/solana/id.json;\
 	solana airdrop 5;\
 	anchor deploy --provider.cluster devnet;\
-	solana program show ${PROGRAM_ID};\
-	anchor verify ${PROGRAM_ID} --provider.cluster devnet;
+	solana program show ${PROGRAM_ID};
 
 .PHONY: upgrade-dev
 upgrade-dev: build
@@ -38,16 +37,14 @@ upgrade-dev: build
 	anchor upgrade target/deploy/lottery.so \
 		--program-id ${PROGRAM_ID} \
 		--provider.cluster devnet;\
-	solana program show ${PROGRAM_ID};\
-	anchor verify ${PROGRAM_ID} --provider.cluster devnet;
+	solana program show ${PROGRAM_ID};
 
 .PHONY: deploy-main
 deploy-main: build
 	@$(call set_cluster,"https://api.mainnet-beta.solana.com");\
 	solana account  ~/.config/solana/id.json;\
 	anchor deploy --provider.cluster mainnet;\
-	solana program show ${PROGRAM_ID};\
-	anchor verify ${PROGRAM_ID} --provider.cluster mainnet;
+	solana program show ${PROGRAM_ID};
 
 .PHONY: upgrade-main
 upgrade-main: build
@@ -56,8 +53,7 @@ upgrade-main: build
 	anchor upgrade target/deploy/lottery.so \
 		--program-id ${PROGRAM_ID} \
 		--provider.cluster mainnet;\
-	solana program show ${PROGRAM_ID};\
-	anchor verify ${PROGRAM_ID} --provider.cluster mainnet;
+	solana program show ${PROGRAM_ID};
 
 sol:
 	@solana rent $$(stat -f%z target/deploy/lottery.so)
