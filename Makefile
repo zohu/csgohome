@@ -13,7 +13,7 @@ keypair:
 
 .PHONY: build
 build: keypair
-	@anchor build --verifiable
+	@anchor build  # --verifiable
 
 .PHONY: deploy-loc
 deploy-loc: build
