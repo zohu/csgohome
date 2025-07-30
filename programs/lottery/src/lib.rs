@@ -101,10 +101,10 @@ pub struct Random<'info> {
         constraint = signer.is_signer @ Error::InvalidSigner,
     )]
     pub signer: Signer<'info>,
-    pub system_program: Program<'info, System>,
     pub clock: Sysvar<'info, Clock>,
     /// CHECK: readonly
     pub random_account: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
 }
 
 #[error_code]

@@ -19,8 +19,7 @@ build: keypair
 deploy-loc: build
 	@$(call set_cluster,"http://localhost:8899");\
 	anchor deploy --provider.cluster localnet;\
-	solana program show ${PROGRAM_ID};\
-	anchor verify ${PROGRAM_ID} --provider.cluster localnet;
+	solana program show ${PROGRAM_ID};
 
 .PHONY: deploy-dev
 deploy-dev: build
@@ -55,7 +54,7 @@ upgrade-main: build
 		--provider.cluster mainnet;\
 	solana program show ${PROGRAM_ID};
 
-sol:
+sol: build
 	@solana rent $$(stat -f%z target/deploy/lottery.so)
 
 test:
