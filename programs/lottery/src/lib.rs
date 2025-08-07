@@ -37,8 +37,9 @@ pub mod lottery {
         let clock = Clock::get()?;
         let slot_bytes = clock.slot.to_le_bytes();
         let timestamp_bytes = clock.unix_timestamp.to_le_bytes();
-        // 添加簽名者作為熵源
-        // Add the signer as an entropy source
+        // 添加玩家和簽名者作為熵源
+        // Add the player and signer as an entropy source
+        let player_bytes = ctx.accounts.player.key().to_bytes();
         let signer_bytes = ctx.accounts.signer.key().to_bytes();
         // 使用最后一个区块作為隨機的熵源，防止預測
         // Use the last block as a random entropy source to prevent prediction
@@ -49,6 +50,7 @@ pub mod lottery {
                 count_bytes.len() +
                 slot_bytes.len() +
                 timestamp_bytes.len() +
+                player_bytes.len() +
                 signer_bytes.len() +
                 latest_block_bytes.len()
         );
@@ -56,6 +58,7 @@ pub mod lottery {
         data.extend_from_slice(&count_bytes);
         data.extend_from_slice(&slot_bytes);
         data.extend_from_slice(&timestamp_bytes);
+        data.extend_from_slice(&player_bytes);
         data.extend_from_slice(&signer_bytes);
         data.extend_from_slice(&latest_block_bytes);
 
@@ -95,6 +98,8 @@ pub mod lottery {
 
 #[derive(Accounts)]
 pub struct Random<'info> {
+    #[account(constraint = signer.is_signer @ Error::InvalidSigner,)]
+    pub player: Signer<'info>,
     #[account(constraint = signer.is_signer @ Error::InvalidSigner,)]
     pub signer: Signer<'info>,
     #[account(mut,constraint = payer.is_signer @ Error::InvalidSigner,)]

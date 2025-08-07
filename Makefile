@@ -1,61 +1,57 @@
 
+PROGRAM := CsgojSEAWiq9Ns1hW2Y8mmvKVhcmF9vU5W6fUXjg4uDi
 
-define set_cluster
-solana config set --url $1
-endef
+# [mainnet-beta, testnet, devnet, localhost]
 
-PROGRAM_ID := CsgojSEAWiq9Ns1hW2Y8mmvKVhcmF9vU5W6fUXjg4uDi
+.PHONY: keys
+keys:
+	@cp -a ~/.config/solana/${PROGRAM}.json target/deploy/lottery-keypair.json;\
+		solana address -k target/deploy/lottery-keypair.json;\
+		anchor keys sync;
 
-.PHONY: keypair
-keypair:
-	@cp -a ~/.config/solana/${PROGRAM_ID}.json target/deploy/lottery-keypair.json
-	@solana address -k target/deploy/lottery-keypair.json
+.PHONY: loc
+loc: keys
+	@anchor build;\
+		anchor deploy --provider.cluster localnet;\
+		solana program show ${PROGRAM} --url localhost;
 
-.PHONY: build
-build: keypair
-	@anchor build  # --verifiable
-
-.PHONY: deploy-loc
-deploy-loc: build
-	@$(call set_cluster,"http://localhost:8899");\
-	anchor deploy --provider.cluster localnet;\
-	solana program show ${PROGRAM_ID};
-
-.PHONY: deploy-dev
-deploy-dev: build
-	@$(call set_cluster,"https://api.devnet.solana.com");\
-	solana account  ~/.config/solana/id.json;\
-	solana airdrop 5;\
-	anchor deploy --provider.cluster devnet;\
-	solana program show ${PROGRAM_ID};
+.PHONY: dev
+dev: keys
+	@anchor build;\
+		solana account  ~/.config/solana/id.json --url devnet;\
+		solana airdrop 1  --url devnet;\
+		anchor deploy --provider.cluster devnet;\
+		solana program show ${PROGRAM} --url devnet;
 
 .PHONY: upgrade-dev
-upgrade-dev: build
-	@$(call set_cluster,"https://api.devnet.solana.com");\
-	solana account  ~/.config/solana/id.json;\
-	anchor upgrade target/deploy/lottery.so \
-		--program-id ${PROGRAM_ID} \
-		--provider.cluster devnet;\
-	solana program show ${PROGRAM_ID};
+upgrade-dev:
+	@anchor build;\
+		solana account  ~/.config/solana/id.json --url devnet;\
+		solana airdrop 1 --url devnet;\
+		anchor upgrade target/deploy/lottery.so \
+			--program-id ${PROGRAM} \
+			--provider.cluster devnet;\
+		solana program show ${PROGRAM} --url devnet;
 
-.PHONY: deploy-main
-deploy-main: build
-	@$(call set_cluster,"https://api.mainnet-beta.solana.com");\
-	solana account  ~/.config/solana/id.json;\
-	anchor deploy --provider.cluster mainnet;\
-	solana program show ${PROGRAM_ID};
+.PHONY: main
+main:
+	@anchor build --verifiable;\
+		solana account  ~/.config/solana/id.json --url mainnet-beta;\
+		anchor deploy --provider.cluster mainnet-beta;\
+		solana program show ${PROGRAM} --url mainnet-beta;
 
 .PHONY: upgrade-main
-upgrade-main: build
-	@$(call set_cluster,"https://api.mainnet-beta.solana.com");\
-	solana account  ~/.config/solana/id.json;\
-	anchor upgrade target/deploy/lottery.so \
-		--program-id ${PROGRAM_ID} \
-		--provider.cluster mainnet;\
-	solana program show ${PROGRAM_ID};
+upgrade-main:
+	@anchor build --verifiable;\
+		solana account  ~/.config/solana/id.json --url mainnet-beta;\
+		solana airdrop 1 --url mainnet-beta;\
+		anchor upgrade target/deploy/lottery.so \
+			--program-id ${PROGRAM} \
+			--provider.cluster mainnet-beta;\
+		solana program show ${PROGRAM} --url mainnet-beta;
 
-sol: build
-	@solana rent $$(stat -f%z target/deploy/lottery.so)
+sol:
+	@anchor build && solana rent $$(stat -f%z target/deploy/lottery.so)
 
 test:
 	@solana-verify verify-from-repo -u "http://localhost:8899" \
