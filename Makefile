@@ -23,31 +23,11 @@ dev: keys
 		anchor deploy --provider.cluster devnet;\
 		solana program show ${PROGRAM} --url devnet;
 
-.PHONY: upgrade-dev
-upgrade-dev:
-	@anchor build;\
-		solana account  ~/.config/solana/id.json --url devnet;\
-		solana airdrop 1 --url devnet;\
-		anchor upgrade target/deploy/lottery.so \
-			--program-id ${PROGRAM} \
-			--provider.cluster devnet;\
-		solana program show ${PROGRAM} --url devnet;
-
 .PHONY: main
 main:
 	@anchor build --verifiable;\
 		solana account  ~/.config/solana/id.json --url mainnet-beta;\
 		anchor deploy --provider.cluster mainnet-beta;\
-		solana program show ${PROGRAM} --url mainnet-beta;
-
-.PHONY: upgrade-main
-upgrade-main:
-	@anchor build --verifiable;\
-		solana account  ~/.config/solana/id.json --url mainnet-beta;\
-		solana airdrop 1 --url mainnet-beta;\
-		anchor upgrade target/deploy/lottery.so \
-			--program-id ${PROGRAM} \
-			--provider.cluster mainnet-beta;\
 		solana program show ${PROGRAM} --url mainnet-beta;
 
 sol:
