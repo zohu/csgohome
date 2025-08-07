@@ -19,9 +19,17 @@ loc: keys
 dev: keys
 	@anchor build;\
 		solana account  ~/.config/solana/id.json --url devnet;\
-		solana airdrop 1  --url devnet;\
+		solana airdrop 5  --url devnet;\
 		anchor deploy --provider.cluster devnet;\
 		solana program show ${PROGRAM} --url devnet;
+
+.PHONY: test
+test: keys
+	@anchor build;\
+		solana account  ~/.config/solana/id.json --url testnet;\
+		solana airdrop 5  --url testnet;\
+		anchor deploy --provider.cluster testnet;\
+		solana program show ${PROGRAM} --url testnet;
 
 .PHONY: main
 main:
@@ -32,7 +40,3 @@ main:
 
 sol:
 	@anchor build && solana rent $$(stat -f%z target/deploy/lottery.so)
-
-test:
-	@solana-verify verify-from-repo -u "http://localhost:8899" \
-		--program-id ${PROGRAM_ID} https://github.com/zohu/csgohome
